@@ -100,3 +100,36 @@ end
 function Data.AddCustomGoal(goal)
     ns.db.customGoals[#ns.db.customGoals + 1] = goal
 end
+
+function Data.FindCustomGoalByKey(key)
+    for i, goal in ipairs(ns.db.customGoals) do
+        if goal.key == key then
+            return goal, i
+        end
+    end
+    return nil, nil
+end
+
+function Data.UpsertCustomGoal(goal)
+    local existing = Data.FindCustomGoalByKey(goal.key)
+
+    if existing then
+        -- on met a jour uniquement les champs de definition,
+        -- sans ecraser l etat runtime deja persiste
+        existing.title = goal.title or existing.title
+        existing.checkType = goal.checkType or existing.checkType
+        existing.sourceID = goal.sourceID or existing.sourceID
+        existing.priority = goal.priority or existing.priority
+        existing.bucket = goal.bucket or existing.bucket
+        existing.notes = goal.notes or existing.notes
+
+        if existing.completed == nil and goal.completed ~= nil then
+            existing.completed = goal.completed
+        end
+
+        return existing
+    end
+
+    ns.db.customGoals[#ns.db.customGoals + 1] = goal
+    return goal
+end

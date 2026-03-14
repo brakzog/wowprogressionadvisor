@@ -16,7 +16,7 @@ end
 
 local function addManualExampleGoals()
     if not hasGoal("suramar_campaign") then
-        ns.Data.AddCustomGoal({
+        ns.Data.UpsertCustomGoal({
             key = "suramar_campaign",
             title = "Finir Suramar",
             checkType = "achievement",
@@ -28,7 +28,7 @@ local function addManualExampleGoals()
     end
 
     if not hasGoal("weekly_open_world_focus") then
-        ns.Data.AddCustomGoal({
+        ns.Data.UpsertCustomGoal({
             key = "weekly_open_world_focus",
             title = "Faire un objectif monde prioritaire",
             checkType = "manual",
@@ -40,7 +40,7 @@ local function addManualExampleGoals()
     end
 
     if not hasGoal("weekly_gearing_focus") then
-        ns.Data.AddCustomGoal({
+        ns.Data.UpsertCustomGoal({
             key = "weekly_gearing_focus",
             title = "Faire une activite de gearing utile",
             checkType = "manual",
