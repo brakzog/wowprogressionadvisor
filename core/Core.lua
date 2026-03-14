@@ -36,6 +36,11 @@ local defaults = {
     profiles = {},
     characters = {},
     customGoals = {},
+    playerPreferences = {
+    random_dungeon = 0,
+    weekly_delves = 0,
+    weekly_world_activities = 0,
+},
 }
 ns.defaults = defaults
 
@@ -97,6 +102,7 @@ local function printHelp()
     print("/wpa debug - toggle debug")
     print("/wpa done - toggle show done goals")
     print("/wpa refresh - recompute")
+    print("/wpa prefs - show learned preferences")
 end
 
 local function onLogin()
@@ -117,6 +123,16 @@ local function onLogin()
     SLASH_WPA1 = "/wpa"
     SlashCmdList["WPA"] = function(msg)
         msg = trim(string.lower(msg or ""))
+
+        if msg == "prefs" then
+    if ns.db and ns.db.playerPreferences then
+        print("|cff33ff99WPA|r preferences:")
+        for k, v in pairs(ns.db.playerPreferences) do
+            print(" - " .. tostring(k) .. " = " .. tostring(v))
+        end
+    end
+    return
+end
 
         if msg == "config" then
             if ns.Config and ns.Config.Open then

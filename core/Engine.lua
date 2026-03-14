@@ -445,6 +445,22 @@ local function buildReasonTags(goal, status, phase, zone)
 end
 
 
+local function preferenceWeight(goalKey)
+    if not ns.db or not ns.db.playerPreferences then
+        return 0
+    end
+
+    local value = ns.db.playerPreferences[goalKey] or 0
+
+    -- bonus leger, borne pour eviter les derives
+    if value > 40 then
+        value = 40
+    end
+
+    return value
+end
+
+
 local function addSuggestion(tbl, goal, status, detail)
     local zone = Engine.state.snapshot and Engine.state.snapshot.zone
     local phase = Engine.state.snapshot and Engine.state.snapshot.phase
@@ -493,6 +509,8 @@ if goal.ruleKey == "weekly_delves" then
 end
 
 score = score + diversityPenalty(goal.key)
+
+score = score + preferenceWeight(goal.key)
 
     local priorityLabel = "LOW"
 
@@ -546,6 +564,29 @@ local function groupSuggestions(suggestions)
     end
 
     return grouped
+end
+
+
+local function registerPlayerPreference(goalKey)
+    if not goalKey then
+        return
+    end
+
+    if not ns.db then
+        return
+    end
+
+    ns.db.playerPreferences = ns.db.playerPreferences or {
+        random_dungeon = 0,
+        weekly_delves = 0,
+        weekly_world_activities = 0,
+    }
+
+    if ns.db.playerPreferences[goalKey] == nil then
+        ns.db.playerPreferences[goalKey] = 0
+    end
+
+    ns.db.playerPreferences[goalKey] = ns.db.playerPreferences[goalKey] + 5
 end
 
 function Engine.Refresh(event)
@@ -609,6 +650,8 @@ function Engine.OnSuggestionClick(item)
     end
 
     local goal = item.goal
+
+    registerPlayerPreference(goal.key)
 
     -- Quest goals
     if goal.checkType == "quest" and goal.sourceID then
