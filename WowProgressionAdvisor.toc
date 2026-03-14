@@ -1,0 +1,14 @@
+## Interface: 120001
+## Title: WoW Progression Advisor
+## Notes: Personal progression helper for leveling and weekly goals
+## Author: Julie
+## Version: 0.2.0
+## SavedVariables: WPA_DB
+
+Core.lua
+Data.lua
+Rules.lua
+Engine.lua
+UI.lua
+Config.lua
+
