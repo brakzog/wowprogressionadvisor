@@ -293,23 +293,58 @@ local function zoneWeight(goal, zone)
         return 0
     end
 
-    -- Exemple Suramar
+    -- Zone tres specifique : Suramar
     if zone == "Suramar" then
         if goal.key == "suramar_campaign" then
             return 80
         end
     end
 
-    -- Capitales : favoriser weekly
-    if zone == "Valdrakken" or zone == "Dornogal" then
+    -- Capitales / hubs : favoriser preparation et activites instanciees
+    if zone == "Lune-d’Argent"
+        or zone == "Lune-d'Argent"
+        or zone == "Orgrimmar"
+        or zone == "Hurlevent"
+        or zone == "Dalaran"
+        or zone == "Valdrakken"
+        or zone == "Dornogal" then
+
+        if goal.ruleKey == "random_dungeon" then
+            return 35
+        end
+
+        if goal.ruleKey == "weekly_delves" then
+            return 20
+        end
+    end
+
+    -- Zones d activites monde / endgame : favoriser weekly et open world
+    if zone == "Tempete du Vide"
+        or zone == "Tempête du Vide"
+        or zone == "Azj-Kahet"
+        or zone == "L ile de Dorn"
+        or zone == "L'île de Dorn"
+        or zone == "Les abimes Retentissants"
+        or zone == "Les abîmes Retentissants"
+        or zone == "Sainte-Chute"
+        or zone == "Anneaux de l'eveil"
+        or zone == "Anneaux de l'éveil" then
+
+        if goal.ruleKey == "weekly_world_activities" then
+            return 35
+        end
+
+        if goal.ruleKey == "weekly_delves" then
+            return 25
+        end
+
         if goal.bucket == "weekly" then
-            return 40
+            return 15
         end
     end
 
     return 0
 end
-
 
 local function buildDetailedReason(goal, detail, phase, gearBand)
     local baseReason = detail or goal.notes or ""
