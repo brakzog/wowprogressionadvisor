@@ -19,7 +19,7 @@ local statusText = {
 local OUTER_MARGIN = 14
 local COLUMN_GAP = 14
 local ROW_GAP = 8
-local SECTION_TOP = -152
+local SECTION_TOP = -188
 local SECTION_HEIGHT = 360
 local ROW_HEIGHT = 56
 local MAX_ROWS = 5
@@ -258,13 +258,17 @@ frame.focusLine = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall
 frame.focusLine:SetPoint("TOPLEFT", frame.modeLine, "BOTTOMLEFT", 0, -4)
 frame.focusLine:SetText("Focus: ...")
 
+frame.profileLine = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+frame.profileLine:SetPoint("TOPLEFT", frame.focusLine, "BOTTOMLEFT", 0, -4)
+frame.profileLine:SetText("Player profile: analysing...")
+
 
     frame.close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
     frame.close:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -4, -4)
 
     frame.bestBox = CreateFrame("Frame", nil, frame, "BackdropTemplate")
-    frame.bestBox:SetPoint("TOPLEFT", frame, "TOPLEFT", OUTER_MARGIN, -82)
-frame.bestBox:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -OUTER_MARGIN, -82)
+   frame.bestBox:SetPoint("TOPLEFT", frame, "TOPLEFT", OUTER_MARGIN, -118)
+frame.bestBox:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -OUTER_MARGIN, -118)
     frame.bestBox:SetHeight(54)
     createBackdrop(frame.bestBox)
     frame.bestBox:SetBackdropColor(0.05, 0.12, 0.05, 0.8)
@@ -333,23 +337,21 @@ end
 local profileText = "Player profile: UNKNOWN"
 
 if profile == "DUNGEONS" then
-    profileText = "Player profile: DUNGEONS (prefers instanced content)"
+    profileText = "Player profile: DUNGEONS"
 elseif profile == "DELVES" then
-    profileText = "Player profile: DELVES (prefers solo progression)"
+    profileText = "Player profile: DELVES"
 elseif profile == "WORLD" then
-    profileText = "Player profile: WORLD (prefers open world)"
+    profileText = "Player profile: WORLD"
 elseif profile == "BALANCED" then
-    profileText = "Player profile: BALANCED (mixed playstyle)"
+    profileText = "Player profile: BALANCED"
 end
 
-frame.profileLine:SetText(profileText)
-
+if frame.profileLine then
+    frame.profileLine:SetText(profileText)
+end
 frame.modeLine:SetText(modeText)
 frame.focusLine:SetText(focusText)
 
-frame.profileLine = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-frame.profileLine:SetPoint("TOPLEFT", frame.focusLine, "BOTTOMLEFT", 0, -4)
-frame.profileLine:SetText("Player profile: analysing...")
 
     if best then
         frame.bestTitle:SetText("Best next action: " .. (best.title or "Objectif"))
