@@ -236,13 +236,37 @@ local function phaseWeight(goal, phase)
     return 0
 end
 
+local function zoneWeight(goal, zone)
+    if not zone then
+        return 0
+    end
+
+    -- Exemple Suramar
+    if zone == "Suramar" then
+        if goal.key == "suramar_campaign" then
+            return 80
+        end
+    end
+
+    -- Capitales : favoriser weekly
+    if zone == "Valdrakken" or zone == "Dornogal" then
+        if goal.bucket == "weekly" then
+            return 40
+        end
+    end
+
+    return 0
+end
+
 local function addSuggestion(tbl, goal, status, detail)
+    local zone = Engine.state.snapshot and Engine.state.snapshot.zone
     local phase = Engine.state.snapshot and Engine.state.snapshot.phase
 
     local score = (goal.priority or 0)
         + statusWeight(status) * 100
         + bucketWeight(goal.bucket)
         + phaseWeight(goal, phase)
++ zoneWeight(goal, zone)
 
     local priorityLabel = "LOW"
 
@@ -272,6 +296,10 @@ local function sortSuggestions(tbl)
         return a.score > b.score
     end)
 end
+
+
+
+
 
 local function groupSuggestions(suggestions)
     local grouped = {
