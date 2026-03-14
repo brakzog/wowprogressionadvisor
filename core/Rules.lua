@@ -103,3 +103,21 @@ function Rules.ShouldWeekly()
 
     return snap.ilvl >= 300
 end
+
+function Rules.GetProgressionPhase()
+    local snap = Rules.GetPlayerSnapshot()
+
+    if not snap then
+        return "unknown"
+    end
+
+    if snap.level < snap.maxLevel then
+        return "leveling"
+    end
+
+    if snap.ilvl > 0 and snap.ilvl < 300 then
+        return "gearing"
+    end
+
+    return "weekly"
+end

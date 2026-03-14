@@ -245,14 +245,15 @@ function UI.Refresh()
 
     if snap then
         frame.snapshot:SetText(
-            string.format(
-                "Level %d/%d | ilvl %.1f | zone: %s",
-                snap.level or 0,
-                snap.maxLevel or 0,
-                snap.ilvl or 0,
-                snap.zone or "Unknown"
-            )
-        )
+    string.format(
+        "Level %d/%d | ilvl %.1f | phase: %s | zone: %s",
+        snap.level or 0,
+        snap.maxLevel or 0,
+        snap.ilvl or 0,
+        snap.phase or "unknown",
+        snap.zone or "Unknown"
+    )
+)
     else
         frame.snapshot:SetText("")
     end

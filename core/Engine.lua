@@ -258,6 +258,10 @@ function Engine.Refresh(event)
     Engine.state.lastEvent = event
     Engine.state.snapshot = ns.Rules and ns.Rules.GetPlayerSnapshot and ns.Rules.GetPlayerSnapshot() or nil
 
+    if Engine.state.snapshot and ns.Rules and ns.Rules.GetProgressionPhase then
+    Engine.state.snapshot.phase = ns.Rules.GetProgressionPhase()
+end
+
     local suggestions = {}
 
     if not ns.Data or not ns.Data.GetAllGoals then
