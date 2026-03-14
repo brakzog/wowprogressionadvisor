@@ -460,6 +460,50 @@ local function preferenceWeight(goalKey)
 end
 
 
+
+function Engine.GetPlayerProfile()
+    if not ns.db or not ns.db.playerPreferences or not ns.db.playerPreferences.scores then
+        return "UNKNOWN"
+    end
+
+    local scores = ns.db.playerPreferences.scores
+
+    local dungeon = scores.random_dungeon or 0
+    local delves = scores.weekly_delves or 0
+    local world = scores.weekly_world_activities or 0
+
+    local max = math.max(dungeon, delves, world)
+
+    if max == 0 then
+        return "UNKNOWN"
+    end
+
+    -- detection simple
+    if dungeon >= delves and dungeon >= world then
+        if dungeon - math.max(delves, world) < 5 then
+            return "BALANCED"
+        end
+        return "DUNGEONS"
+    end
+
+    if delves >= dungeon and delves >= world then
+        if delves - math.max(dungeon, world) < 5 then
+            return "BALANCED"
+        end
+        return "DELVES"
+    end
+
+    if world >= dungeon and world >= delves then
+        if world - math.max(dungeon, delves) < 5 then
+            return "BALANCED"
+        end
+        return "WORLD"
+    end
+
+    return "BALANCED"
+end
+
+
 local function addSuggestion(tbl, goal, status, detail)
     local zone = Engine.state.snapshot and Engine.state.snapshot.zone
     local phase = Engine.state.snapshot and Engine.state.snapshot.phase

@@ -313,6 +313,7 @@ layoutVisibleSections(visibleSections)
 
     local best = ns.Engine and ns.Engine.GetBestSuggestion and ns.Engine.GetBestSuggestion() or nil
     local snap = ns.Engine and ns.Engine.GetSnapshot and ns.Engine.GetSnapshot() or nil
+    local profile = ns.Engine and ns.Engine.GetPlayerProfile and ns.Engine.GetPlayerProfile() or "UNKNOWN"
 
     local phase = snap and snap.phase or "unknown"
 local modeText = "Advisor mode: UNKNOWN"
@@ -329,8 +330,26 @@ elseif phase == "weekly" then
     focusText = "Focus: optimiser vos activites hebdomadaires"
 end
 
+local profileText = "Player profile: UNKNOWN"
+
+if profile == "DUNGEONS" then
+    profileText = "Player profile: DUNGEONS (prefers instanced content)"
+elseif profile == "DELVES" then
+    profileText = "Player profile: DELVES (prefers solo progression)"
+elseif profile == "WORLD" then
+    profileText = "Player profile: WORLD (prefers open world)"
+elseif profile == "BALANCED" then
+    profileText = "Player profile: BALANCED (mixed playstyle)"
+end
+
+frame.profileLine:SetText(profileText)
+
 frame.modeLine:SetText(modeText)
 frame.focusLine:SetText(focusText)
+
+frame.profileLine = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+frame.profileLine:SetPoint("TOPLEFT", frame.focusLine, "BOTTOMLEFT", 0, -4)
+frame.profileLine:SetText("Player profile: analysing...")
 
     if best then
         frame.bestTitle:SetText("Best next action: " .. (best.title or "Objectif"))
