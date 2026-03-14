@@ -21,45 +21,33 @@ local function addManualExampleGoals()
             title = "Finir Suramar",
             checkType = "achievement",
             sourceID = 11124,
-            priority = 95,
+            priority = 70,
             bucket = "custom",
-            notes = "Tres bon objectif account-wide / cosmetique / progression Legion.",
+            notes = "Objectif perso de progression / completion.",
         })
     end
 
-    if not hasGoal("dream_explorer") then
+    if not hasGoal("weekly_open_world_focus") then
         ns.Data.AddCustomGoal({
-            key = "dream_explorer",
-            title = "Explorer la zone cible",
+            key = "weekly_open_world_focus",
+            title = "Faire un objectif monde prioritaire",
             checkType = "manual",
-            priority = 60,
+            priority = 65,
             bucket = "custom",
-            notes = "Click dessus pour toggle done / todo.",
+            notes = "A cocher quand vous avez termine votre activite monde la plus rentable.",
             completed = false,
         })
     end
 
-    if not hasGoal("example_weekly_quest") then
+    if not hasGoal("weekly_gearing_focus") then
         ns.Data.AddCustomGoal({
-            key = "example_weekly_quest",
-            title = "Exemple de quete hebdo a remplacer",
-            checkType = "quest",
-            sourceID = 999999,
-            priority = 85,
+            key = "weekly_gearing_focus",
+            title = "Faire une activite de gearing utile",
+            checkType = "manual",
+            priority = 75,
             bucket = "custom",
-            notes = "Remplace l ID par une vraie quete hebdo pour tester le check auto.",
-        })
-    end
-
-    if not hasGoal("test_ach") then
-        ns.Data.AddCustomGoal({
-            key = "test_ach",
-            title = "Test achievement",
-            checkType = "achievement",
-            sourceID = 12,
-            priority = 90,
-            bucket = "custom",
-            notes = "Objectif de test achievement.",
+            notes = "A cocher apres un donjon, gouffre ou autre activite de progression.",
+            completed = false,
         })
     end
 end
@@ -75,7 +63,7 @@ function Config.Open()
         ns.UI.Refresh()
     end
 
-    print("|cff33ff99WPA|r exemples d objectifs charges.")
-    print("|cff33ff99WPA|r /wpa debug - toggle debug")
-    print("|cff33ff99WPA|r /wpa done - show/hide done goals")
+   print("|cff33ff99WPA|r custom goals charges.")
+print("|cff33ff99WPA|r /wpa debug - toggle debug")
+print("|cff33ff99WPA|r /wpa done - show/hide done goals")
 end
