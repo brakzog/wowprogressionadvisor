@@ -43,6 +43,11 @@ local defaults = {
         weekly_world_activities = 0,
     },
     lastDecayAt = 0,
+    behaviour = {
+    dungeons = 0,
+    delves = 0,
+    world = 0,
+},
 },
 }
 ns.defaults = defaults
@@ -106,6 +111,7 @@ local function printHelp()
     print("/wpa done - toggle show done goals")
     print("/wpa refresh - recompute")
     print("/wpa prefs - show learned preferences")
+    print("/wpa behaviour - show learned behaviour counters")
 end
 
 local function onLogin()
@@ -190,6 +196,16 @@ end
         if ns.UI and ns.UI.Toggle then
             ns.UI.Toggle()
         end
+
+        if msg == "behaviour" then
+    if ns.db and ns.db.behaviour then
+        print("|cff33ff99WPA|r behaviour:")
+        print(" - dungeons = " .. tostring(ns.db.behaviour.dungeons or 0))
+        print(" - delves = " .. tostring(ns.db.behaviour.delves or 0))
+        print(" - world = " .. tostring(ns.db.behaviour.world or 0))
+    end
+    return
+end
     end
 end
 
@@ -221,6 +237,9 @@ ns.events:SetScript("OnEvent", function(_, event, ...)
     end
     if event == "LFG_COMPLETION_REWARD" then
     print("|cff33ff99WPA|r Dungeon completed")
+    if ns.Engine and ns.Engine.RecordActivity then
+        ns.Engine.RecordActivity("dungeon")
+    end
 end
 
 if event == "CHALLENGE_MODE_COMPLETED" then
@@ -234,8 +253,8 @@ if event == "ACHIEVEMENT_EARNED" then
 end
 if event == "CRITERIA_EARNED" then
     print("|cff33ff99WPA|r Criteria progress")
-    if ns.Engine and ns.Engine.RegisterActivity then
-        ns.Engine.RegisterActivity("delve")
+    if ns.Engine and ns.Engine.RecordActivity then
+        ns.Engine.RecordActivity("delve")
     end
 end
 
@@ -248,8 +267,8 @@ end
 
 if event == "QUEST_TURNED_IN" then
     print("|cff33ff99WPA|r Quest completed")
-    if ns.Engine and ns.Engine.RegisterWeeklySignal then
-        ns.Engine.RegisterWeeklySignal("quest_turnin")
+    if ns.Engine and ns.Engine.RecordActivity then
+        ns.Engine.RecordActivity("world")
     end
 end
 

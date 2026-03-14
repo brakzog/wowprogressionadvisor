@@ -462,39 +462,38 @@ end
 
 
 function Engine.GetPlayerProfile()
-    if not ns.db or not ns.db.playerPreferences or not ns.db.playerPreferences.scores then
+    if not ns.db or not ns.db.behaviour then
         return "UNKNOWN"
     end
 
-    local scores = ns.db.playerPreferences.scores
+    local behaviour = ns.db.behaviour
 
-    local dungeon = scores.random_dungeon or 0
-    local delves = scores.weekly_delves or 0
-    local world = scores.weekly_world_activities or 0
+    local dungeons = behaviour.dungeons or 0
+    local delves = behaviour.delves or 0
+    local world = behaviour.world or 0
 
-    local max = math.max(dungeon, delves, world)
+    local maxValue = math.max(dungeons, delves, world)
 
-    if max == 0 then
+    if maxValue == 0 then
         return "UNKNOWN"
     end
 
-    -- detection simple
-    if dungeon >= delves and dungeon >= world then
-        if dungeon - math.max(delves, world) < 5 then
+    if dungeons >= delves and dungeons >= world then
+        if dungeons - math.max(delves, world) < 3 then
             return "BALANCED"
         end
         return "DUNGEONS"
     end
 
-    if delves >= dungeon and delves >= world then
-        if delves - math.max(dungeon, world) < 5 then
+    if delves >= dungeons and delves >= world then
+        if delves - math.max(dungeons, world) < 3 then
             return "BALANCED"
         end
         return "DELVES"
     end
 
-    if world >= dungeon and world >= delves then
-        if world - math.max(dungeon, delves) < 5 then
+    if world >= dungeons and world >= delves then
+        if world - math.max(dungeons, delves) < 3 then
             return "BALANCED"
         end
         return "WORLD"
@@ -502,7 +501,6 @@ function Engine.GetPlayerProfile()
 
     return "BALANCED"
 end
-
 
 local function addSuggestion(tbl, goal, status, detail)
     local zone = Engine.state.snapshot and Engine.state.snapshot.zone
@@ -715,6 +713,31 @@ end
 
 function Engine.GetSnapshot()
     return Engine.state.snapshot
+end
+
+
+function Engine.RecordActivity(activityType)
+    if not ns.db then
+        return
+    end
+
+    ns.db.behaviour = ns.db.behaviour or {
+        dungeons = 0,
+        delves = 0,
+        world = 0,
+    }
+
+    if activityType == "dungeon" then
+        ns.db.behaviour.dungeons = (ns.db.behaviour.dungeons or 0) + 1
+    elseif activityType == "delve" then
+        ns.db.behaviour.delves = (ns.db.behaviour.delves or 0) + 1
+    elseif activityType == "world" then
+        ns.db.behaviour.world = (ns.db.behaviour.world or 0) + 1
+    end
+
+    if ns.RefreshAll then
+        ns.RefreshAll("ACTIVITY_RECORDED")
+    end
 end
 
 function Engine.OnSuggestionClick(item)
