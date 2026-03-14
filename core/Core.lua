@@ -184,12 +184,36 @@ ns.events:RegisterEvent("ZONE_CHANGED")
 ns.events:RegisterEvent("ZONE_CHANGED_INDOORS")
 ns.events:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
 ns.events:RegisterEvent("QUEST_LOG_UPDATE")
+ns.events:RegisterEvent("LFG_COMPLETION_REWARD")
+ns.events:RegisterEvent("CHALLENGE_MODE_COMPLETED")
+ns.events:RegisterEvent("ACHIEVEMENT_EARNED")
+ns.events:RegisterEvent("QUEST_TURNED_IN")
+ns.events:RegisterEvent("WEEKLY_REWARDS_UPDATE")
+ns.events:RegisterEvent("CRITERIA_EARNED")
 
 ns.events:SetScript("OnEvent", function(_, event, ...)
     if event == "PLAYER_LOGIN" then
         onLogin()
         return
     end
+    if event == "LFG_COMPLETION_REWARD" then
+    print("|cff33ff99WPA|r Dungeon completed")
+end
+
+if event == "CHALLENGE_MODE_COMPLETED" then
+    print("|cff33ff99WPA|r Mythic+ completed")
+end
+
+if event == "QUEST_TURNED_IN" then
+    print("|cff33ff99WPA|r Quest completed")
+end
+
+if event == "ACHIEVEMENT_EARNED" then
+    print("|cff33ff99WPA|r Achievement earned")
+end
+if event == "CRITERIA_EARNED" then
+    print("|cff33ff99WPA|r Criteria progress")
+end
 
     ns.RefreshAll(event, ...)
 end)
