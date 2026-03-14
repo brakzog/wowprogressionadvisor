@@ -269,7 +269,13 @@ frame.focusLine:SetText(focusText)
 
     if best then
         frame.bestTitle:SetText("Best next action: " .. (best.title or "Objectif"))
-        frame.bestReason:SetText(best.reason or "")
+       local bestReason = best.reason or ""
+
+        if best.reasonTags and #best.reasonTags > 0 then
+            bestReason = bestReason .. " | " .. table.concat(best.reasonTags, ", ")
+end
+
+frame.bestReason:SetText(bestReason)
     else
         frame.bestTitle:SetText("Best next action: none")
         frame.bestReason:SetText("")

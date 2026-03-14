@@ -258,6 +258,46 @@ local function zoneWeight(goal, zone)
     return 0
 end
 
+
+local function buildReasonTags(goal, status, phase, zone)
+    local tags = {}
+
+    if phase == "leveling" and goal.bucket == "leveling" then
+        tags[#tags + 1] = "leveling phase"
+    end
+
+    if phase == "gearing" then
+        if goal.ruleKey == "random_dungeon" then
+            tags[#tags + 1] = "gearing phase"
+        end
+        if goal.ruleKey == "weekly_delves" then
+            tags[#tags + 1] = "gear progression"
+        end
+        if goal.ruleKey == "weekly_world_activities" then
+            tags[#tags + 1] = "catch-up activity"
+        end
+    end
+
+    if phase == "weekly" and goal.bucket == "weekly" then
+        tags[#tags + 1] = "weekly phase"
+    end
+
+    if zone == "Suramar" and goal.key == "suramar_campaign" then
+        tags[#tags + 1] = "zone bonus"
+    end
+
+    if status == STATUS.MANUAL then
+        tags[#tags + 1] = "manual tracking"
+    elseif status == STATUS.AUTO_TODO then
+        tags[#tags + 1] = "ready now"
+    elseif status == STATUS.AUTO_PARTIAL then
+        tags[#tags + 1] = "in progress"
+    end
+
+    return tags
+end
+
+
 local function addSuggestion(tbl, goal, status, detail)
     local zone = Engine.state.snapshot and Engine.state.snapshot.zone
     local phase = Engine.state.snapshot and Engine.state.snapshot.phase
@@ -275,17 +315,20 @@ local function addSuggestion(tbl, goal, status, detail)
     elseif score >= 300 then
         priorityLabel = "MED"
     end
+    
+    local tags = buildReasonTags(goal, status, phase, zone)
 
-    tbl[#tbl + 1] = {
-        key = goal.key,
-        title = goal.title or "Objectif",
-        reason = detail or goal.notes or "",
-        score = score,
-        bucket = goal.bucket or "misc",
-        status = status,
-        priorityLabel = priorityLabel,
-        goal = goal,
-    }
+tbl[#tbl + 1] = {
+    key = goal.key,
+    title = goal.title or "Objectif",
+    reason = detail or goal.notes or "",
+    score = score,
+    bucket = goal.bucket or "misc",
+    status = status,
+    priorityLabel = priorityLabel,
+    reasonTags = tags,
+    goal = goal,
+}
 end
 
 local function sortSuggestions(tbl)
