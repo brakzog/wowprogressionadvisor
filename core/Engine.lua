@@ -446,13 +446,12 @@ end
 
 
 local function preferenceWeight(goalKey)
-    if not ns.db or not ns.db.playerPreferences then
+    if not ns.db or not ns.db.playerPreferences or not ns.db.playerPreferences.scores then
         return 0
     end
 
-    local value = ns.db.playerPreferences[goalKey] or 0
+    local value = ns.db.playerPreferences.scores[goalKey] or 0
 
-    -- bonus leger, borne pour eviter les derives
     if value > 40 then
         value = 40
     end
@@ -568,28 +567,58 @@ end
 
 
 local function registerPlayerPreference(goalKey)
-    if not goalKey then
+    if not goalKey or not ns.db then
         return
     end
 
+    ns.db.playerPreferences = ns.db.playerPreferences or {
+        scores = {},
+        lastDecayAt = 0,
+    }
+
+    ns.db.playerPreferences.scores = ns.db.playerPreferences.scores or {}
+
+    if ns.db.playerPreferences.scores[goalKey] == nil then
+        ns.db.playerPreferences.scores[goalKey] = 0
+    end
+
+    ns.db.playerPreferences.scores[goalKey] = ns.db.playerPreferences.scores[goalKey] + 5
+end
+
+local function decayPlayerPreferences()
     if not ns.db then
         return
     end
 
     ns.db.playerPreferences = ns.db.playerPreferences or {
-        random_dungeon = 0,
-        weekly_delves = 0,
-        weekly_world_activities = 0,
+        scores = {},
+        lastDecayAt = 0,
     }
 
-    if ns.db.playerPreferences[goalKey] == nil then
-        ns.db.playerPreferences[goalKey] = 0
+    ns.db.playerPreferences.scores = ns.db.playerPreferences.scores or {}
+
+    local now = time()
+    local lastDecayAt = ns.db.playerPreferences.lastDecayAt or 0
+
+    -- decay max une fois par heure
+    if lastDecayAt > 0 and (now - lastDecayAt) < 3600 then
+        return
     end
 
-    ns.db.playerPreferences[goalKey] = ns.db.playerPreferences[goalKey] + 5
+    for key, value in pairs(ns.db.playerPreferences.scores) do
+        local newValue = value - 1
+        if newValue < 0 then
+            newValue = 0
+        end
+        ns.db.playerPreferences.scores[key] = newValue
+    end
+
+    ns.db.playerPreferences.lastDecayAt = now
 end
 
+
 function Engine.Refresh(event)
+    decayPlayerPreferences()
     Engine.state.lastEvent = event
     Engine.state.snapshot = ns.Rules and ns.Rules.GetPlayerSnapshot and ns.Rules.GetPlayerSnapshot() or nil
 

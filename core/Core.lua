@@ -37,9 +37,12 @@ local defaults = {
     characters = {},
     customGoals = {},
     playerPreferences = {
-    random_dungeon = 0,
-    weekly_delves = 0,
-    weekly_world_activities = 0,
+    scores = {
+        random_dungeon = 0,
+        weekly_delves = 0,
+        weekly_world_activities = 0,
+    },
+    lastDecayAt = 0,
 },
 }
 ns.defaults = defaults
@@ -127,9 +130,13 @@ local function onLogin()
         if msg == "prefs" then
     if ns.db and ns.db.playerPreferences then
         print("|cff33ff99WPA|r preferences:")
-        for k, v in pairs(ns.db.playerPreferences) do
-            print(" - " .. tostring(k) .. " = " .. tostring(v))
-        end
+        if ns.db and ns.db.playerPreferences and ns.db.playerPreferences.scores then
+    print("|cff33ff99WPA|r preferences:")
+    for k, v in pairs(ns.db.playerPreferences.scores) do
+        print(" - " .. tostring(k) .. " = " .. tostring(v))
+    end
+    print(" - lastDecayAt = " .. tostring(ns.db.playerPreferences.lastDecayAt or 0))
+end
     end
     return
 end
