@@ -64,24 +64,28 @@ local function createRow(parent, width, index)
     row.reason:SetWidth(width - 20)
 
     row:SetScript("OnEnter", function(self)
-        if not self.item or not GameTooltip then
-            return
-        end
+    if not self.item or not GameTooltip then
+        return
+    end
 
-        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-        GameTooltip:SetText(self.item.title or "Objectif")
-        GameTooltip:AddLine(self.item.reason or "", 1, 1, 1, true)
-        GameTooltip:AddLine("Status: " .. tostring(self.item.status), 0.8, 0.8, 0.8)
-        local score = self.item.score or 0
-        GameTooltip:AddLine("Score: " .. tostring(score), 0.6, 1, 0.6)
+    local item = self.item
+    local score = item.score or 0
+    local priorityLabel = item.priorityLabel or "LOW"
 
-        if self.item.goal and self.item.goal.sourceID then
-            GameTooltip:AddLine("SourceID: " .. tostring(self.item.goal.sourceID), 0.6, 0.8, 1)
-        end
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    GameTooltip:SetText(item.title or "Objectif")
+    GameTooltip:AddLine(item.reason or "", 1, 1, 1, true)
+    GameTooltip:AddLine("Status: " .. tostring(item.status or "UNKNOWN"), 0.8, 0.8, 0.8)
+    GameTooltip:AddLine("Priority: " .. tostring(priorityLabel), 1, 0.82, 0)
+    GameTooltip:AddLine("Score: " .. tostring(score), 0.6, 1, 0.6)
 
-        GameTooltip:AddLine("Click: action rapide", 1, 0.82, 0)
-        GameTooltip:Show()
-    end)
+    if item.goal and item.goal.sourceID then
+        GameTooltip:AddLine("SourceID: " .. tostring(item.goal.sourceID), 0.6, 0.8, 1)
+    end
+
+    GameTooltip:AddLine("Click: action rapide", 1, 0.82, 0)
+    GameTooltip:Show()
+end)
 
     row:SetScript("OnLeave", function()
         if GameTooltip then
@@ -140,7 +144,8 @@ local function fillSection(section, items)
         if item then
             local status = statusText[item.status] or "?"
             row.item = item
-            row.title:SetText(string.format("%s %s", status, item.title or "Objectif"))
+            local priorityLabel = item.priorityLabel or "LOW"
+row.title:SetText(string.format("[%s] %s %s", priorityLabel, status, item.title or "Objectif"))
             row.reason:SetText(item.reason or "")
             row:Show()
         else

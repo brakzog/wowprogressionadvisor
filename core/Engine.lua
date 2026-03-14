@@ -237,27 +237,20 @@ local function phaseWeight(goal, phase)
 end
 
 local function addSuggestion(tbl, goal, status, detail)
-    local function phaseWeight(goal, phase)
-    if not phase then
-        return 0
-    end
+    local phase = Engine.state.snapshot and Engine.state.snapshot.phase
 
-    if phase == "leveling" then
-        if goal.bucket == "leveling" then return 40 end
-    end
+    local score = (goal.priority or 0)
+        + statusWeight(status) * 100
+        + bucketWeight(goal.bucket)
+        + phaseWeight(goal, phase)
 
-    if phase == "gearing" then
-        if goal.ruleKey == "random_dungeon" then return 60 end
-        if goal.ruleKey == "weekly_delves" then return 50 end
-        if goal.ruleKey == "weekly_world_activities" then return 40 end
-    end
+    local priorityLabel = "LOW"
 
-    if phase == "weekly" then
-        if goal.bucket == "weekly" then return 60 end
+    if score >= 500 then
+        priorityLabel = "HIGH"
+    elseif score >= 300 then
+        priorityLabel = "MED"
     end
-
-    return 0
-end
 
     tbl[#tbl + 1] = {
         key = goal.key,
@@ -266,6 +259,7 @@ end
         score = score,
         bucket = goal.bucket or "misc",
         status = status,
+        priorityLabel = priorityLabel,
         goal = goal,
     }
 end
