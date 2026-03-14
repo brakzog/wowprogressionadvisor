@@ -72,7 +72,8 @@ local function createRow(parent, width, index)
         GameTooltip:SetText(self.item.title or "Objectif")
         GameTooltip:AddLine(self.item.reason or "", 1, 1, 1, true)
         GameTooltip:AddLine("Status: " .. tostring(self.item.status), 0.8, 0.8, 0.8)
-        GameTooltip:AddLine("Score: " .. tostring(self.item.score), 0.6, 1, 0.6)
+        local score = self.item.score or 0
+        GameTooltip:AddLine("Score: " .. tostring(score), 0.6, 1, 0.6)
 
         if self.item.goal and self.item.goal.sourceID then
             GameTooltip:AddLine("SourceID: " .. tostring(self.item.goal.sourceID), 0.6, 0.8, 1)
