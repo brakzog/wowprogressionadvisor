@@ -5,10 +5,10 @@
 ## Version: 0.2.0
 ## SavedVariables: WPA_DB
 
-Core.lua
-Data.lua
-Rules.lua
-Engine.lua
-UI.lua
-Config.lua
+core/Core.lua
+core/Data.lua
+core/Rules.lua
+core/Engine.lua
+ui/UI.lua
+config/Config.lua
 

@@ -54,3 +54,52 @@ function Rules.GetPlayerSnapshot()
         zone = Rules.GetZoneName(),
     }
 end
+
+ns.Rules = ns.Rules or {}
+local Rules = ns.Rules
+
+local function getAverageItemLevel()
+    if GetAverageItemLevel then
+        local overall, equipped = GetAverageItemLevel()
+        return equipped or overall or 0
+    end
+    return 0
+end
+
+function Rules.GetPlayerSnapshot()
+    local level = UnitLevel("player") or 1
+    local maxLevel = GetMaxPlayerLevel and GetMaxPlayerLevel() or 90
+    local ilvl = getAverageItemLevel()
+
+    return {
+        level = level,
+        maxLevel = maxLevel,
+        ilvl = ilvl,
+    }
+end
+
+
+function Rules.ShouldLeveling()
+    local snap = Rules.GetPlayerSnapshot()
+    return snap.level < snap.maxLevel
+end
+
+function Rules.ShouldGearUp()
+    local snap = Rules.GetPlayerSnapshot()
+
+    if snap.level < snap.maxLevel then
+        return false
+    end
+
+    return snap.ilvl < 300
+end
+
+function Rules.ShouldWeekly()
+    local snap = Rules.GetPlayerSnapshot()
+
+    if snap.level < snap.maxLevel then
+        return false
+    end
+
+    return snap.ilvl >= 300
+end
