@@ -381,42 +381,46 @@ function Engine.OnSuggestionClick(item)
 
     -- Rule-based goals
     if goal.checkType == "rule" then
-        -- Random dungeon
-        if goal.ruleKey == "random_dungeon" then
-            if PVEFrame_ToggleFrame then
-                PVEFrame_ToggleFrame()
-            end
-            print("|cff33ff99WPA|r ouverture outil donjon")
-            return
-        end
 
-        -- Weekly world activities / expeditions
-        if goal.ruleKey == "weekly_world_activities" then
-            if ToggleWorldMap then
-                ToggleWorldMap()
-            end
-            print("|cff33ff99WPA|r ouverture carte du monde")
-            return
+    -- Random dungeon
+    if goal.ruleKey == "random_dungeon" then
+        if PVEFrame_ToggleFrame then
+            PVEFrame_ToggleFrame()
         end
-
-        -- Weekly delves
-        if goal.ruleKey == "weekly_delves" then
-            if ToggleWorldMap then
-                ToggleWorldMap()
-            end
-            print("|cff33ff99WPA|r ouverture carte pour les gouffres")
-            return
+        if LFDParentFrame then
+            LFDParentFrame:Show()
         end
-
-        -- Weekly meta
-        if goal.ruleKey == "weekly_meta" then
-            if ToggleWorldMap then
-                ToggleWorldMap()
-            end
-            print("|cff33ff99WPA|r ouverture carte pour activites hebdo")
-            return
-        end
+        print("|cff33ff99WPA|r ouverture de l outil Donjon")
+        return
     end
+
+    -- Weekly world activities
+    if goal.ruleKey == "weekly_world_activities" then
+        if ToggleWorldMap then
+            ToggleWorldMap()
+        end
+        print("|cff33ff99WPA|r ouverture de la carte du monde")
+        return
+    end
+
+    -- Weekly delves
+    if goal.ruleKey == "weekly_delves" then
+        if ToggleWorldMap then
+            ToggleWorldMap()
+        end
+        print("|cff33ff99WPA|r cherchez un gouffre proche sur la carte")
+        return
+    end
+
+    -- Weekly meta
+    if goal.ruleKey == "weekly_meta" then
+        if ToggleWorldMap then
+            ToggleWorldMap()
+        end
+        print("|cff33ff99WPA|r regardez les activites hebdomadaires")
+        return
+    end
+end
 
     print("|cff33ff99WPA|r clicked:", goal.title or "goal")
 end
