@@ -213,6 +213,9 @@ if event == "ACHIEVEMENT_EARNED" then
 end
 if event == "CRITERIA_EARNED" then
     print("|cff33ff99WPA|r Criteria progress")
+    if ns.Engine and ns.Engine.RegisterActivity then
+        ns.Engine.RegisterActivity("delve")
+    end
 end
 
     ns.RefreshAll(event, ...)

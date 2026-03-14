@@ -15,6 +15,14 @@ Engine.state = {
     best = nil,
     lastEvent = nil,
     snapshot = nil,
+    recentActivities = {
+        delve = 0,
+        dungeon = 0,
+    },
+    weeklyState = {
+        delveCount = 0,
+        dungeonCount = 0,
+    },
 }
 
 local STATUS = {
@@ -97,6 +105,26 @@ local function checkWeeklyRewards()
         return STATUS.AUTO_PARTIAL, text
     else
         return STATUS.AUTO_TODO, text
+    end
+end
+
+
+function Engine.RegisterActivity(activityType)
+    if not Engine.state.weeklyState then
+        Engine.state.weeklyState = {
+            delveCount = 0,
+            dungeonCount = 0,
+        }
+    end
+
+    if activityType == "delve" then
+        Engine.state.weeklyState.delveCount = (Engine.state.weeklyState.delveCount or 0) + 1
+    elseif activityType == "dungeon" then
+        Engine.state.weeklyState.dungeonCount = (Engine.state.weeklyState.dungeonCount or 0) + 1
+    end
+
+    if ns.RefreshAll then
+        ns.RefreshAll("ACTIVITY_DONE")
     end
 end
 
@@ -307,6 +335,25 @@ local function addSuggestion(tbl, goal, status, detail)
         + bucketWeight(goal.bucket)
         + phaseWeight(goal, phase)
 + zoneWeight(goal, zone)
+
+
+
+
+        local weeklyState = Engine.state.weeklyState or {}
+
+if goal.ruleKey == "weekly_delves" then
+    local delveCount = weeklyState.delveCount or 0
+
+    if phase == "gearing" then
+        if delveCount >= 2 then
+            score = score - 40
+        end
+    elseif phase == "weekly" then
+        if delveCount >= 1 then
+            score = score - 20
+        end
+    end
+end
 
     local priorityLabel = "LOW"
 
