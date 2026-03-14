@@ -204,9 +204,7 @@ if event == "CHALLENGE_MODE_COMPLETED" then
     print("|cff33ff99WPA|r Mythic+ completed")
 end
 
-if event == "QUEST_TURNED_IN" then
-    print("|cff33ff99WPA|r Quest completed")
-end
+
 
 if event == "ACHIEVEMENT_EARNED" then
     print("|cff33ff99WPA|r Achievement earned")
@@ -215,6 +213,20 @@ if event == "CRITERIA_EARNED" then
     print("|cff33ff99WPA|r Criteria progress")
     if ns.Engine and ns.Engine.RegisterActivity then
         ns.Engine.RegisterActivity("delve")
+    end
+end
+
+if event == "WEEKLY_REWARDS_UPDATE" then
+    print("|cff33ff99WPA|r Weekly rewards updated")
+    if ns.Engine and ns.Engine.RegisterWeeklySignal then
+        ns.Engine.RegisterWeeklySignal("weekly_rewards")
+    end
+end
+
+if event == "QUEST_TURNED_IN" then
+    print("|cff33ff99WPA|r Quest completed")
+    if ns.Engine and ns.Engine.RegisterWeeklySignal then
+        ns.Engine.RegisterWeeklySignal("quest_turnin")
     end
 end
 

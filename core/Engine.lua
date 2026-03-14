@@ -23,6 +23,10 @@ Engine.state = {
         delveCount = 0,
         dungeonCount = 0,
     },
+    weeklySignals = {
+        lastWeeklyRewardsUpdate = 0,
+        lastQuestTurnIn = 0,
+    },
 }
 
 local STATUS = {
@@ -105,6 +109,26 @@ local function checkWeeklyRewards()
         return STATUS.AUTO_PARTIAL, text
     else
         return STATUS.AUTO_TODO, text
+    end
+end
+
+
+function Engine.RegisterWeeklySignal(signalType)
+    if not Engine.state.weeklySignals then
+        Engine.state.weeklySignals = {
+            lastWeeklyRewardsUpdate = 0,
+            lastQuestTurnIn = 0,
+        }
+    end
+
+    if signalType == "weekly_rewards" then
+        Engine.state.weeklySignals.lastWeeklyRewardsUpdate = GetTime()
+    elseif signalType == "quest_turnin" then
+        Engine.state.weeklySignals.lastQuestTurnIn = GetTime()
+    end
+
+    if ns.RefreshAll then
+        ns.RefreshAll("WEEKLY_SIGNAL_UPDATE")
     end
 end
 
@@ -337,6 +361,22 @@ local function addSuggestion(tbl, goal, status, detail)
 + zoneWeight(goal, zone)
 
 
+
+local weeklySignals = Engine.state.weeklySignals or {}
+
+if goal.bucket == "weekly" then
+    local lastWeeklyRewardsUpdate = weeklySignals.lastWeeklyRewardsUpdate or 0
+    local lastQuestTurnIn = weeklySignals.lastQuestTurnIn or 0
+    local now = GetTime()
+
+    if lastWeeklyRewardsUpdate > 0 and (now - lastWeeklyRewardsUpdate) < 30 then
+        score = score + 20
+    end
+
+    if lastQuestTurnIn > 0 and (now - lastQuestTurnIn) < 30 then
+        score = score + 10
+    end
+end
 
 
         local weeklyState = Engine.state.weeklyState or {}
