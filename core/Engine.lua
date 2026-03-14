@@ -309,11 +309,13 @@ function Engine.OnSuggestionClick(item)
 
     local goal = item.goal
 
+    -- Quest goals
     if goal.checkType == "quest" and goal.sourceID then
         print("|cff33ff99WPA|r quest goal:", goal.sourceID)
         return
     end
 
+    -- Achievement goals
     if goal.checkType == "achievement" and goal.sourceID then
         if AchievementFrame_LoadUI then
             AchievementFrame_LoadUI()
@@ -325,6 +327,7 @@ function Engine.OnSuggestionClick(item)
         return
     end
 
+    -- Manual goals
     if goal.checkType == "manual" then
         goal.completed = not goal.completed
         print("|cff33ff99WPA|r manual goal toggled:", goal.title, tostring(goal.completed))
@@ -333,6 +336,45 @@ function Engine.OnSuggestionClick(item)
             ns.UI.Refresh()
         end
         return
+    end
+
+    -- Rule-based goals
+    if goal.checkType == "rule" then
+        -- Random dungeon
+        if goal.ruleKey == "random_dungeon" then
+            if PVEFrame_ToggleFrame then
+                PVEFrame_ToggleFrame()
+            end
+            print("|cff33ff99WPA|r ouverture outil donjon")
+            return
+        end
+
+        -- Weekly world activities / expeditions
+        if goal.ruleKey == "weekly_world_activities" then
+            if ToggleWorldMap then
+                ToggleWorldMap()
+            end
+            print("|cff33ff99WPA|r ouverture carte du monde")
+            return
+        end
+
+        -- Weekly delves
+        if goal.ruleKey == "weekly_delves" then
+            if ToggleWorldMap then
+                ToggleWorldMap()
+            end
+            print("|cff33ff99WPA|r ouverture carte pour les gouffres")
+            return
+        end
+
+        -- Weekly meta
+        if goal.ruleKey == "weekly_meta" then
+            if ToggleWorldMap then
+                ToggleWorldMap()
+            end
+            print("|cff33ff99WPA|r ouverture carte pour activites hebdo")
+            return
+        end
     end
 
     print("|cff33ff99WPA|r clicked:", goal.title or "goal")
