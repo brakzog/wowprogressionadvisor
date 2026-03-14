@@ -400,7 +400,14 @@ function Engine.OnSuggestionClick(item)
     if goal.checkType == "manual" then
         goal.completed = not goal.completed
         print("|cff33ff99WPA|r manual goal toggled:", goal.title, tostring(goal.completed))
-        Engine.Refresh("MANUAL_GOAL_TOGGLE")
+        if ns.RefreshAll then
+    ns.RefreshAll("MANUAL_GOAL_TOGGLE")
+else
+    Engine.Refresh("MANUAL_GOAL_TOGGLE")
+    if ns.UI and ns.UI.Refresh then
+        ns.UI.Refresh()
+    end
+end
         if ns.UI and ns.UI.Refresh then
             ns.UI.Refresh()
         end

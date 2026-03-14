@@ -55,13 +55,16 @@ end
 function Config.Open()
     addManualExampleGoals()
 
+    if ns.RefreshAll then
+    ns.RefreshAll("CONFIG_OPEN")
+else
     if ns.Engine and ns.Engine.Refresh then
         ns.Engine.Refresh("CONFIG_OPEN")
     end
-
     if ns.UI and ns.UI.Refresh then
         ns.UI.Refresh()
     end
+end
 
    print("|cff33ff99WPA|r custom goals charges.")
 print("|cff33ff99WPA|r /wpa debug - toggle debug")

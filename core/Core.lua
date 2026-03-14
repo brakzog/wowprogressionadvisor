@@ -39,6 +39,16 @@ local defaults = {
 }
 ns.defaults = defaults
 
+function ns.RefreshAll(reason, ...)
+    if ns.Engine and ns.Engine.Refresh then
+        ns.Engine.Refresh(reason, ...)
+    end
+
+    if ns.UI and ns.UI.Refresh then
+        ns.UI.Refresh()
+    end
+end
+
 local function getCharKey()
     local name = UnitName("player") or "Unknown"
     local realm = GetRealmName() or "UnknownRealm"
@@ -170,7 +180,10 @@ ns.events:RegisterEvent("CRITERIA_EARNED")
 ns.events:RegisterEvent("WEEKLY_REWARDS_UPDATE")
 ns.events:RegisterEvent("BAG_UPDATE_DELAYED")
 ns.events:RegisterEvent("ZONE_CHANGED_NEW_AREA")
+ns.events:RegisterEvent("ZONE_CHANGED")
+ns.events:RegisterEvent("ZONE_CHANGED_INDOORS")
 ns.events:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
+ns.events:RegisterEvent("QUEST_LOG_UPDATE")
 
 ns.events:SetScript("OnEvent", function(_, event, ...)
     if event == "PLAYER_LOGIN" then
@@ -178,11 +191,5 @@ ns.events:SetScript("OnEvent", function(_, event, ...)
         return
     end
 
-    if ns.Engine and ns.Engine.Refresh then
-        ns.Engine.Refresh(event, ...)
-    end
-
-    if ns.UI and ns.UI.Refresh then
-        ns.UI.Refresh()
-    end
+    ns.RefreshAll(event, ...)
 end)
