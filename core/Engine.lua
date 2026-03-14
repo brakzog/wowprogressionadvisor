@@ -311,6 +311,45 @@ local function zoneWeight(goal, zone)
 end
 
 
+local function buildDetailedReason(goal, detail, phase, gearBand)
+    local baseReason = detail or goal.notes or ""
+
+    if phase == "gearing" then
+        if goal.ruleKey == "random_dungeon" then
+            if gearBand == "low" then
+                return "Donjons utiles pour gear rapidement"
+            elseif gearBand == "mid" then
+                return "Donjons encore utiles, mais d autres activites deviennent competitives"
+            else
+                return "Donjons utiles surtout en complement"
+            end
+        end
+
+        if goal.ruleKey == "weekly_delves" then
+            if gearBand == "low" then
+                return "Gouffres utiles pour progresser en gear"
+            elseif gearBand == "mid" then
+                return "Gouffres tres interessants pour continuer le rattrapage"
+            else
+                return "Gouffres utiles en activite secondaire"
+            end
+        end
+
+        if goal.ruleKey == "weekly_world_activities" then
+            if gearBand == "low" then
+                return "Activites monde utiles pour le rattrapage"
+            elseif gearBand == "mid" then
+                return "Activites monde utiles en complement de progression"
+            else
+                return "Activites monde surtout utiles pour du bonus"
+            end
+        end
+    end
+
+    return baseReason
+end
+
+
 local function buildReasonTags(goal, status, phase, zone)
     local tags = {}
 
@@ -353,6 +392,8 @@ end
 local function addSuggestion(tbl, goal, status, detail)
     local zone = Engine.state.snapshot and Engine.state.snapshot.zone
     local phase = Engine.state.snapshot and Engine.state.snapshot.phase
+    local gearBand = ns.Rules and ns.Rules.GetGearBand and ns.Rules.GetGearBand() or "unknown"
+local finalReason = buildDetailedReason(goal, detail, phase, gearBand)
 
     local score = (goal.priority or 0)
         + statusWeight(status) * 100
@@ -408,7 +449,7 @@ end
 tbl[#tbl + 1] = {
     key = goal.key,
     title = goal.title or "Objectif",
-    reason = detail or goal.notes or "",
+    reason = finalReason,
     score = score,
     bucket = goal.bucket or "misc",
     status = status,

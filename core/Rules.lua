@@ -83,3 +83,19 @@ function Rules.GetProgressionPhase()
 
     return "weekly"
 end
+
+function Rules.GetGearBand()
+    local snap = Rules.GetPlayerSnapshot()
+
+    if not snap or not snap.ilvl then
+        return "unknown"
+    end
+
+    if snap.ilvl < 220 then
+        return "low"
+    elseif snap.ilvl < 260 then
+        return "mid"
+    end
+
+    return "high"
+end
