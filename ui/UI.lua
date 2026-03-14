@@ -19,7 +19,7 @@ local statusText = {
 local OUTER_MARGIN = 14
 local COLUMN_GAP = 14
 local ROW_GAP = 8
-local SECTION_TOP = -122
+local SECTION_TOP = -152
 local SECTION_HEIGHT = 360
 local ROW_HEIGHT = 56
 local MAX_ROWS = 5
@@ -180,13 +180,21 @@ function UI.Create()
     frame.subTitle:SetPoint("TOPLEFT", frame.title, "BOTTOMLEFT", 0, -4)
     frame.subTitle:SetText("Smart suggestions based on your character progression")
 
+    frame.modeLine = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+frame.modeLine:SetPoint("TOPLEFT", frame.subTitle, "BOTTOMLEFT", 0, -8)
+frame.modeLine:SetText("Advisor mode: UNKNOWN")
+
+frame.focusLine = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+frame.focusLine:SetPoint("TOPLEFT", frame.modeLine, "BOTTOMLEFT", 0, -4)
+frame.focusLine:SetText("Focus: ...")
+
 
     frame.close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
     frame.close:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -4, -4)
 
     frame.bestBox = CreateFrame("Frame", nil, frame, "BackdropTemplate")
-    frame.bestBox:SetPoint("TOPLEFT", frame, "TOPLEFT", OUTER_MARGIN, -52)
-    frame.bestBox:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -OUTER_MARGIN, -52)
+    frame.bestBox:SetPoint("TOPLEFT", frame, "TOPLEFT", OUTER_MARGIN, -82)
+frame.bestBox:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -OUTER_MARGIN, -82)
     frame.bestBox:SetHeight(54)
     createBackdrop(frame.bestBox)
     frame.bestBox:SetBackdropColor(0.05, 0.12, 0.05, 0.8)
@@ -234,6 +242,24 @@ function UI.Refresh()
 
     local best = ns.Engine and ns.Engine.GetBestSuggestion and ns.Engine.GetBestSuggestion() or nil
     local snap = ns.Engine and ns.Engine.GetSnapshot and ns.Engine.GetSnapshot() or nil
+
+    local phase = snap and snap.phase or "unknown"
+local modeText = "Advisor mode: UNKNOWN"
+local focusText = "Focus: analyse indisponible"
+
+if phase == "leveling" then
+    modeText = "Advisor mode: LEVELING"
+    focusText = "Focus: monter en niveau efficacement"
+elseif phase == "gearing" then
+    modeText = "Advisor mode: GEARING"
+    focusText = "Focus: ameliorer votre equipement"
+elseif phase == "weekly" then
+    modeText = "Advisor mode: WEEKLY"
+    focusText = "Focus: optimiser vos activites hebdomadaires"
+end
+
+frame.modeLine:SetText(modeText)
+frame.focusLine:SetText(focusText)
 
     if best then
         frame.bestTitle:SetText("Best next action: " .. (best.title or "Objectif"))
