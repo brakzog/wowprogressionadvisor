@@ -213,8 +213,51 @@ local function bucketWeight(bucket)
     return 0
 end
 
+
+local function phaseWeight(goal, phase)
+    if not phase then
+        return 0
+    end
+
+    if phase == "leveling" then
+        if goal.bucket == "leveling" then return 40 end
+    end
+
+    if phase == "gearing" then
+        if goal.ruleKey == "random_dungeon" then return 60 end
+        if goal.ruleKey == "weekly_delves" then return 50 end
+        if goal.ruleKey == "weekly_world_activities" then return 40 end
+    end
+
+    if phase == "weekly" then
+        if goal.bucket == "weekly" then return 60 end
+    end
+
+    return 0
+end
+
 local function addSuggestion(tbl, goal, status, detail)
-    local score = (goal.priority or 0) + statusWeight(status) * 100 + bucketWeight(goal.bucket)
+    local function phaseWeight(goal, phase)
+    if not phase then
+        return 0
+    end
+
+    if phase == "leveling" then
+        if goal.bucket == "leveling" then return 40 end
+    end
+
+    if phase == "gearing" then
+        if goal.ruleKey == "random_dungeon" then return 60 end
+        if goal.ruleKey == "weekly_delves" then return 50 end
+        if goal.ruleKey == "weekly_world_activities" then return 40 end
+    end
+
+    if phase == "weekly" then
+        if goal.bucket == "weekly" then return 60 end
+    end
+
+    return 0
+end
 
     tbl[#tbl + 1] = {
         key = goal.key,
