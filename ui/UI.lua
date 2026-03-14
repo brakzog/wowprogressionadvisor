@@ -119,6 +119,70 @@ local function createSection(parent, title, columnIndex)
     return section
 end
 
+local function getVisibleSections(grouped)
+    local visible = {}
+
+    if grouped.leveling and #grouped.leveling > 0 then
+        visible[#visible + 1] = sections.leveling
+    end
+
+    if grouped.custom and #grouped.custom > 0 then
+        visible[#visible + 1] = sections.custom
+    end
+
+    if grouped.weekly and #grouped.weekly > 0 then
+        visible[#visible + 1] = sections.weekly
+    end
+
+    return visible
+end
+
+
+local function layoutVisibleSections(visibleSections)
+    local count = #visibleSections
+    if count == 0 then
+        return
+    end
+
+    local totalWidth = frame:GetWidth() - (OUTER_MARGIN * 2)
+    local totalGap = COLUMN_GAP * (count - 1)
+    local colWidth = math.floor((totalWidth - totalGap) / count)
+
+    for index, section in ipairs(visibleSections) do
+        local x = OUTER_MARGIN + ((index - 1) * (colWidth + COLUMN_GAP))
+
+        section:ClearAllPoints()
+        section:SetPoint("TOPLEFT", frame, "TOPLEFT", x, SECTION_TOP)
+        section:SetSize(colWidth, SECTION_HEIGHT)
+        section:Show()
+
+        section.header:ClearAllPoints()
+        section.header:SetPoint("BOTTOMLEFT", section, "TOPLEFT", 0, 10)
+        section.header:SetWidth(colWidth)
+
+        for _, row in ipairs(section.rows) do
+            row:SetWidth(colWidth)
+            row.title:SetWidth(colWidth - 20)
+            row.reason:SetWidth(colWidth - 20)
+        end
+    end
+
+    local allSections = { sections.leveling, sections.custom, sections.weekly }
+    for _, section in ipairs(allSections) do
+        local found = false
+        for _, visible in ipairs(visibleSections) do
+            if section == visible then
+                found = true
+                break
+            end
+        end
+
+        if not found then
+            section:Hide()
+        end
+    end
+end
+
 local function layoutSection(section)
     local colWidth = getColumnWidth()
     local x = OUTER_MARGIN + ((section.columnIndex - 1) * (colWidth + COLUMN_GAP))
@@ -236,15 +300,16 @@ function UI.Refresh()
         return
     end
 
-    layoutSection(sections.leveling)
-    layoutSection(sections.custom)
-    layoutSection(sections.weekly)
+local grouped = ns.Engine and ns.Engine.GetGroupedSuggestions and ns.Engine.GetGroupedSuggestions() or {
+    leveling = {},
+    custom = {},
+    weekly = {},
+}
 
-    local grouped = ns.Engine and ns.Engine.GetGroupedSuggestions and ns.Engine.GetGroupedSuggestions() or {
-        leveling = {},
-        custom = {},
-        weekly = {},
-    }
+local visibleSections = getVisibleSections(grouped)
+layoutVisibleSections(visibleSections)
+
+
 
     local best = ns.Engine and ns.Engine.GetBestSuggestion and ns.Engine.GetBestSuggestion() or nil
     local snap = ns.Engine and ns.Engine.GetSnapshot and ns.Engine.GetSnapshot() or nil
