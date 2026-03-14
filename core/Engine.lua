@@ -15,18 +15,8 @@ Engine.state = {
     best = nil,
     lastEvent = nil,
     snapshot = nil,
-    recentActivities = {
-        delve = 0,
-        dungeon = 0,
-    },
-    weeklyState = {
-        delveCount = 0,
-        dungeonCount = 0,
-    },
-    weeklySignals = {
-        lastWeeklyRewardsUpdate = 0,
-        lastQuestTurnIn = 0,
-    },
+
+    recentSuggestions = {},
 }
 
 local STATUS = {
@@ -37,6 +27,37 @@ local STATUS = {
     UNKNOWN = "UNKNOWN",
 }
 Engine.STATUS = STATUS
+
+
+
+local function registerSuggestion(goalKey)
+    if not goalKey then
+        return
+    end
+
+    local list = Engine.state.recentSuggestions or {}
+    list[#list + 1] = goalKey
+
+    -- on garde seulement les 3 dernieres
+    if #list > 3 then
+        table.remove(list, 1)
+    end
+
+    Engine.state.recentSuggestions = list
+end
+
+
+local function diversityPenalty(goalKey)
+    local list = Engine.state.recentSuggestions or {}
+
+    for _, key in ipairs(list) do
+        if key == goalKey then
+            return -40
+        end
+    end
+
+    return 0
+end
 
 local function isQuestDone(questID)
     if not questID then
@@ -471,6 +492,8 @@ if goal.ruleKey == "weekly_delves" then
     end
 end
 
+score = score + diversityPenalty(goal.key)
+
     local priorityLabel = "LOW"
 
     if score >= 500 then
@@ -559,6 +582,9 @@ end
     Engine.state.suggestions = suggestions
     Engine.state.grouped = groupSuggestions(suggestions)
     Engine.state.best = suggestions[1]
+    if Engine.state.best then
+    registerSuggestion(Engine.state.best.key)
+end
 end
 
 function Engine.GetSuggestions()
