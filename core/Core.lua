@@ -130,82 +130,75 @@ local function onLogin()
     end
 
     SLASH_WPA1 = "/wpa"
-    SlashCmdList["WPA"] = function(msg)
-        msg = trim(string.lower(msg or ""))
+SlashCmdList["WPA"] = function(msg)
+    msg = trim(string.lower(msg or ""))
 
-        if msg == "prefs" then
-    if ns.db and ns.db.playerPreferences then
-        print("|cff33ff99WPA|r preferences:")
+    if msg == "prefs" then
         if ns.db and ns.db.playerPreferences and ns.db.playerPreferences.scores then
-    print("|cff33ff99WPA|r preferences:")
-    for k, v in pairs(ns.db.playerPreferences.scores) do
-        print(" - " .. tostring(k) .. " = " .. tostring(v))
+            print("|cff33ff99WPA|r preferences:")
+            for k, v in pairs(ns.db.playerPreferences.scores) do
+                print(" - " .. tostring(k) .. " = " .. tostring(v))
+            end
+            print(" - lastDecayAt = " .. tostring(ns.db.playerPreferences.lastDecayAt or 0))
+        else
+            print("|cff33ff99WPA|r preferences: none yet")
+        end
+        return
     end
-    print(" - lastDecayAt = " .. tostring(ns.db.playerPreferences.lastDecayAt or 0))
-end
-    end
-    return
-end
 
-        if msg == "config" then
-            if ns.Config and ns.Config.Open then
-                ns.Config.Open()
-            end
-            return
-        end
+    if msg == "behaviour" then
+        ns.db.behaviour = ns.db.behaviour or {
+            dungeons = 0,
+            delves = 0,
+            world = 0,
+        }
 
-        if msg == "debug" then
-            ns.db.debug = not ns.db.debug
-            print("|cff33ff99WPA|r debug =", tostring(ns.db.debug))
-            if ns.Engine and ns.Engine.Refresh then
-                ns.Engine.Refresh("DEBUG_TOGGLE")
-            end
-            if ns.UI and ns.UI.Refresh then
-                ns.UI.Refresh()
-            end
-            return
-        end
-
-        if msg == "done" then
-            ns.db.showDone = not ns.db.showDone
-            print("|cff33ff99WPA|r showDone =", tostring(ns.db.showDone))
-            if ns.Engine and ns.Engine.Refresh then
-                ns.Engine.Refresh("DONE_TOGGLE")
-            end
-            if ns.UI and ns.UI.Refresh then
-                ns.UI.Refresh()
-            end
-            return
-        end
-
-        if msg == "refresh" then
-            if ns.Engine and ns.Engine.Refresh then
-                ns.Engine.Refresh("MANUAL_REFRESH")
-            end
-            if ns.UI and ns.UI.Refresh then
-                ns.UI.Refresh()
-            end
-            return
-        end
-
-        if msg == "help" then
-            printHelp()
-            return
-        end
-
-        if ns.UI and ns.UI.Toggle then
-            ns.UI.Toggle()
-        end
-
-        if msg == "behaviour" then
-    if ns.db and ns.db.behaviour then
         print("|cff33ff99WPA|r behaviour:")
         print(" - dungeons = " .. tostring(ns.db.behaviour.dungeons or 0))
         print(" - delves = " .. tostring(ns.db.behaviour.delves or 0))
         print(" - world = " .. tostring(ns.db.behaviour.world or 0))
+        return
     end
-    return
-end
+
+    if msg == "config" then
+        if ns.Config and ns.Config.Open then
+            ns.Config.Open()
+        end
+        return
+    end
+
+    if msg == "debug" then
+        ns.db.debug = not ns.db.debug
+        print("|cff33ff99WPA|r debug = " .. tostring(ns.db.debug))
+        if ns.RefreshAll then
+            ns.RefreshAll("DEBUG_TOGGLE")
+        end
+        return
+    end
+
+    if msg == "done" then
+        ns.db.showDone = not ns.db.showDone
+        print("|cff33ff99WPA|r showDone = " .. tostring(ns.db.showDone))
+        if ns.RefreshAll then
+            ns.RefreshAll("DONE_TOGGLE")
+        end
+        return
+    end
+
+    if msg == "refresh" then
+        if ns.RefreshAll then
+            ns.RefreshAll("MANUAL_REFRESH")
+        end
+        return
+    end
+
+    if msg == "help" then
+        printHelp()
+        return
+    end
+
+    if ns.UI and ns.UI.Toggle then
+        ns.UI.Toggle()
     end
 end
 
